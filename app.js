@@ -1,14 +1,21 @@
 var express = require('express');
 var app = express();
-var Slack = require('slack-node');
+
+
+//twilio module setup
 var accountSid = 'ACc53d4b3274b300cfd7271583be4c75e0';
 var authToken = '3282ecd2e11d9e36ec3938156306faa3';
 var client = require('twilio')(accountSid, authToken);
 
+
+//slack webhook api
+var Slack = require('slack-node');
 webhookUri = "https://hooks.slack.com/services/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";
 slack = new Slack();
 slack.setWebhook(webhookUri);
 
+
+//random imgs, texts
 var imgArr = [
 	'https://media.giphy.com/media/xT0Gqz4x4eLd5gDtaU/giphy.gif',
 	'https://media.giphy.com/media/l46CekClkSfNji5nq/giphy.gif',
@@ -18,25 +25,24 @@ var imgArr = [
 var textArr = ['Turn up the AC!', 'It is hot!', 'Humidity Emergency', 'Dyiiiiing!!!']
 
 
+
+//post router
 app.post('/', function(req, res, next){
-
-
 
 	var randomImg = imgArr[Math.floor(Math.random()*(imgArr.length))];
 	var randomTxt = textArr[Math.floor(Math.random()*(textArr.length))];
 
-	console.log(req.body);
-	
-	if(!req.body){
-		slack.webhook({
-		  channel: "#sweatyfullstackers",
-		  username: "Tessel Hackathon Group 11_sweatyfullstackers",
-		  text: randomTxt + randomImg + "\nVote 11 for team 11!"
-		}, function(err, response) {
-		  console.log(response);
-		});	
-	}
+	//send a message through slack
+	slack.webhook({
+	  channel: "#sweatyfullstackers",
+	  username: "Tessel Hackathon Group 11_sweatyfullstackers",
+	  text: randomTxt + randomImg + "\nVote 11 for team 11!"
+	}, function(err, response) {
+	  console.log(response);
+	});	
 
+
+	//send a message through twilio
 	client.messages.create({
 	   to: "+19148438841",
 	   from: "+19143713081", 
